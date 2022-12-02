@@ -1,0 +1,48 @@
+     1                                  ;Ryad alla - 40227731
+     2                                  section .data
+     3 00000000 6A754D70696E67204A-     phrase db 'juMping JAck flaSh #1',10, 0
+     3 00000009 41636B20666C615368-
+     3 00000012 2023310A00         
+     4 00000017 2020                    space db '  '
+     5                                  section .text
+     6                                          global _start
+     7                                  _start:
+     8                                          
+     9 00000000 B804000000                      mov eax,4       ; The system call for write (sys_write)
+    10 00000005 BB01000000                      mov ebx,1       ; File descriptor 1 - standard output
+    11 0000000A B9[00000000]                    mov ecx,phrase  ; Put the address of the string in ecx
+    12 0000000F BA16000000                      mov edx,22      ; Put number of characters to write in edx
+    13                                                          ; string contains 13 characters in total
+    14 00000014 CD80                            int 80h         ; Call the interrupt routine which
+    15                                                          ; performs the display of the characters
+    16                                   
+    17 00000016 BE00000000                      mov esi, 0      ; clear the souce index pointer which gets the offset ;address within the memory
+    18 0000001B B915000000                      mov ecx, 21     ;go through the 21 characters of the pharase
+    19 00000020 BA[00000000]                    mov edx, phrase ; move base offset address of the message in ebp
+    20                                          
+    21                                  
+    22                                  ; loop through the string
+    23                                  
+    24 00000025 8A0432                  _ryad:  mov al, [edx+esi] ; fetch character in data segment and store in                               ;accumulator
+    25 00000028 3C00                            cmp al, 0;
+    26 0000002A 7410                            je _exit        ; if al contains 0x00, it means we reached the end of                 ;string and stops the loop
+    27 0000002C 3C61                            cmp al, 'a'     ; compare al with 0x61 which is the 'a' in ascii table
+    28 0000002E 7C09                            jl next         ; if its lower than 61 it means no need to convert the              ;character and loop through next element
+    29 00000030 3C7A                            cmp al, 'z'     ; compare al with 0x7A which is the 'z' in ascii table
+    30 00000032 7F05                            jg next         ; if it is
+    31 00000034 2C20                    lowercase: sub al, 32   ; if the jumps dont execute, it will switch to                             ; uppercase
+    32 00000036 880432                             mov [edx+esi], al ; write upper case in memory
+    33 00000039 46                      next:   inc esi; next character
+    34 0000003A EBE9                            jmp _ryad ; next element
+    35                                          
+    36                                          
+    37                                  
+    38                                  _exit:
+    39                                           
+    40 0000003C B804000000                      mov eax,4       ; The system call for write (sys_write)
+    41 00000041 BB01000000                      mov ebx,1       ; File descriptor 1 - standard output
+    42 00000046 B9[00000000]                    mov ecx,phrase  ; Put the address of the string in ecx
+    43 0000004B BA16000000                      mov edx,22      ; Put number of characters to write in edx
+    44                                                          ; string contains 13 characters in total
+    45 00000050 CD80                            int 80h         ; Call the interrupt routine which
+    46                                                          ; performs the display of the characters
